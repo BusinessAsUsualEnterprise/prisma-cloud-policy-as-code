@@ -12,7 +12,8 @@ resource "prismacloud_policy" "policies" {
     for_each = { for policy in yamldecode(file("./custom-policies.yaml")).config_policies: policy.name => policy }
     name = each.value.name
     policy_type = lower(each.value.type)
-    cloud_type  = each.value.cloud
+    policy_subtypes = [lookup(each.value, "criteria", false) == false ? "build" : "run",lookup(each.value, "build", false) == false ? "run" : "build"]
+    cloud_type  = lookup(each.value, "cloud", null)
     severity = each.value.severity
     labels      = lookup(each.value, "labels", [])
     description = each.value.description
@@ -20,6 +21,7 @@ resource "prismacloud_policy" "policies" {
     rule {
         name = each.value.name
         rule_type = title(each.value.type)
+        criteria = lookup(each.value, "criteria", "")
         parameters = {
             savedSearch = false
             withIac     = lookup(each.value, "build", false) == false ? false : true         
@@ -32,7 +34,6 @@ resource "prismacloud_policy" "policies" {
                 type           = "build"  
                 recommendation = lookup(children.value, "recommendation", null)
                 metadata = {
-                    # "code" : file("./build_policy.yaml")
                     "code" : lookup(children.value, "policy", "")
                 }
             }

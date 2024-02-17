@@ -37,7 +37,36 @@ config_policies:
   type: config
   cloud: aws
   severity: low
-  criteria: "config from"
+  criteria: config from cloud.resource where api.name = 'aws-ec2-describe-instances' AND json.rule = tags[*].key does not contain owner
   labels:
   - label1
 
+- # Name must be the same as the Metadata.Name value in the build.polict value
+  name: Policy 4
+  # Description must be the same as the Metadata.Guideline value in the build.policy value
+  description: This is Policy 3
+  type: config
+  cloud: aws
+  # Severity must be the same as the "metadata.severity" value in the "build.policy" value
+  severity: low
+  # Policy Labels
+  labels:
+  - label1
+  - label2
+  build:
+  - policy: |
+      ---
+      metadata:
+        name: "Policy 4"
+        severity: "low"
+        guidelines: "This is Policy 3"
+        category: "compute"
+      scope:
+        provider: "gcp" 
+      definition:
+        cond_type: "attribute"
+        resource_types: "google_compute_instance"
+        attribute: "labels"
+        operator: "contains"
+        value: "owner"
+    recommendation: do stuff!
