@@ -1,0 +1,6 @@
+# Ignore Terraform Files
+.terraform*
+*.tfstate*
+
+# Ignore Authenrication Details for Prisma Cloud
+.prismacloud_auth.json

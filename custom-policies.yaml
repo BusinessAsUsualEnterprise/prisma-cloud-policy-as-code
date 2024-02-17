@@ -1,0 +1,43 @@
+config_policies:
+
+- # Name must be the same as the Metadata.Name value in the build.polict value
+  name: Policy 1
+  # Description must be the same as the Metadata.Guideline value in the build.policy value
+  description: This is Policy 1 - Changed1
+  type: config
+  cloud: aws
+  # Severity must be the same as the "metadata.severity" value in the "build.policy" value
+  severity: low
+  # RQL Query to find items failing the runtime check
+  criteria: config from cloud.resource where api.name = 'aws-ec2-describe-instances' AND json.rule = tags[*].key does not contain owner
+  # Policy Labels
+  labels:
+  - label1
+  - label2
+  build:
+  - policy: |
+      ---
+      metadata:
+        name: "Policy 1"
+        severity: "low"
+        guidelines: "This is Policy 1 - Changed1"
+        category: "compute"
+      scope:
+        provider: "gcp" 
+      definition:
+        cond_type: "attribute"
+        resource_types: "google_compute_instance"
+        attribute: "labels"
+        operator: "contains"
+        value: "owner"
+    recommendation: do stuff!
+
+- name: Policy 2
+  description: This is Policy 2 - Chnaged
+  type: config
+  cloud: aws
+  severity: low
+  criteria: "config from"
+  labels:
+  - label1
+
